@@ -1,42 +1,28 @@
 import multer from "multer";
 import path from "path";
-import { fileURLToPath } from "url";
+import fs from "fs";
 
-// Define __dirname manually for ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// ✅ Ensure `uploads` directory exists
+const uploadDir = path.join(__dirname, "../../uploads"); // Store outside `dist/`
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
-// Define the upload directory
-const uploadDir = path.join(__dirname, "../uploads");
-
-// Configure Multer storage
+// ✅ Configure Multer Storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+    const uniqueSuffix = `${Date.now()}-${file.originalname}`;
+    cb(null, uniqueSuffix);
   }
 });
 
-// File filter (optional, to allow only specific file types)
-const fileFilter = (req: any, file: Express.Multer.File, cb: any) => {
-  const allowedMimeTypes = ["image/jpeg", "image/png", "application/pdf"];
-  if (allowedMimeTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error("Invalid file type. Only JPEG, PNG, and PDF are allowed."), false);
-  }
-};
-
-// Multer upload middleware
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB file size limit
-});
+const upload = multer({ storage });
 
 export default upload;
+
 
 // // Fix __dirname for ES Modules
 // const __filename = fileURLToPath(import.meta.url);
