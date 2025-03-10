@@ -458,34 +458,33 @@ export async function getUserDetails(req: Request, res: Response): Promise<void>
 
 export async function uploadProfilePic(req: Request, res: Response): Promise<void> {
   try {
+
     const userID = req.params.id;
 
-    // ✅ Check if User Exists
     const user = await UserModel.findById(userID);
+
     if (!user) {
       throw new Error("User not found");
     }
-
-    // ✅ Check if File is Uploaded
     if (!req.file) {
       throw new Error("No file uploaded");
     }
 
-    // ✅ Save File Path (Remove `/dist/`)
-    const filePath = req.file.path.replace(/\\/g, "/"); // Fix Windows backslashes
-    user.profilePic = filePath.replace("/dist/", "/");  // Ensure correct path
-
+    user.profilePic = req.file.path;
     await user.save();
 
-    // ✅ Send Response
+    console.log("req.file.path", req.file.path)
+
+    // ✅ Send Success Response
     res.status(200).json({
       success: true,
       message: "Profile picture updated successfully",
       profilePic: user.profilePic,
     });
 
+
   } catch (error: any) {
-    console.error(`Error uploading profile picture: ${error.message}`);
-    res.status(500).json({ success: false, message: "Internal server error", error: error.message });
+    res.status(500).json({ error: error.message });
+    console.log(`Error in signup: ${error.message}`);
   }
 }
