@@ -455,3 +455,36 @@ export async function getUserDetails(req: Request, res: Response): Promise<void>
     console.log(`Error in signup: ${error.message}`);
   }
 }
+
+export async function uploadProfilePic(req: Request, res: Response): Promise<void> {
+  try {
+
+    const userID = req.params.id;
+
+    const user = await UserModel.findById(userID);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+    if (!req.file) {
+      throw new Error("No file uploaded");
+    }
+
+    user.profilePic = req.file.path;
+    await user.save();
+
+    console.log("req.file.path", req.file.path)
+
+    // ✅ Send Success Response
+    res.status(200).json({
+      success: true,
+      message: "Profile picture updated successfully",
+      profilePic: user.profilePic,
+    });
+
+
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+    console.log(`Error in signup: ${error.message}`);
+  }
+}

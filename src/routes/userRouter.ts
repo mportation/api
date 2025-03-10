@@ -15,8 +15,9 @@ import {
   uploadVehicleDetails,
   uploadProfessionalDetails,
   getUserDetails,
-  uploadUserPic,
+  uploadProfilePic,
 } from "../controllers/userController.js";
+import upload from "../middlewares/multerMiddleware.js";
 
 const router = Router();
 
@@ -38,6 +39,6 @@ router.put("/vehicle/:id", uploadVehicleDetails);
 router.put("/professional/:id", uploadProfessionalDetails);
 router.get("/details/:id", getUserDetails);
 
-router.put("/profile-pic/:id", uploadUserPic);
+router.post("/profile-pic/:id", upload.single("file"), uploadProfilePic);
 
 export default router;

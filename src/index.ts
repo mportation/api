@@ -1,10 +1,11 @@
-import express, { json } from "express";
-import dotenv from "dotenv";
 import cors from "cors";
+import dotenv from "dotenv";
+import express, { json } from "express";
 import cookieParser from "cookie-parser";
 import connectDb from "./lib/dbConnection.js";
 import authRouter from "./routes/authRouter.js";
 import userRouter from "./routes/userRouter.js";
+import uploadRouter from "./routes/uploadRouter.js";
 
 // Load environment variables
 dotenv.config();
@@ -22,7 +23,7 @@ app.use(cors());
 
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
-app.use("/uploads", express.static("uploads"));
+app.use("/upload", uploadRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
